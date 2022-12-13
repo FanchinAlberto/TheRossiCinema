@@ -5,7 +5,7 @@ function getShows(){
     var shows = JSON.parse(retrievedObject);
     
     for(let i = 0; i<2; i++){
-        document.getElementById('show' + (i+1)).innerHTML += 'Sala: ' + shows[i].sala + '<br>' + 'Data: ' + shows[i].giorno + '<br>' + 'Ora:' + shows[i].ora;
+        document.getElementById('show' + (i+1)).innerHTML += 'Sala: ' + shows[i].sala + '<br>' + 'Data: ' + shows[i].giorno + '<br>' + 'Ora:' + shows[i].ora + '<br> Posti: ' + shows[i].posti;
     }
 }
 const parentElement2 = document.querySelector('#container-times');
@@ -42,13 +42,26 @@ input_ticket.addEventListener('keyup', event => {
 });
 
 
-function confirm(){
+async function confirm(){
     var retrievedObject = localStorage.getItem('filmsJSON');
     var shows = JSON.parse(retrievedObject);
     let div = document.getElementById('contain-resume');
     let select = document.getElementById('show'+ selected);
     let total = input_ticket.value*price;
     div.innerHTML = 'RESUME <br>' + 'Sala: ' + shows[selected - 1].sala + '<br> Giorno: ' + shows[selected -1].giorno + '<br> Ora: ' + shows[selected-1].ora + '<br> Tickets + Total: ' + input_ticket.value + ', ' + total.toFixed(2) + '€' + '<button class="w-full px-4 py-2 font-bold text-gray-900 bg-orange-400 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline mt-5" onclick="pay()"> GO TO PAYMENT </button>';
+    var data = {
+        total : shows[selected].posti,
+        seats : input_ticket.value,
+        show : shows[selected].film,
+        date : shows[selected].giorno
+    }
+    const response = await fetch('updatePlaces.php', {
+        method: 'POST',
+        headers:{
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(data)
+    })
 }
 
 function pay(){
